@@ -1,8 +1,10 @@
 import BgEase from "@/components/BgEase";
 import FlipButton from "@/components/ui/FlipButton";
 import LogoCashierEase from "@/components/ui/LogoCashierEase";
+import { useNavigate } from "react-router";
 
 export default function PreLogin() {
+  const navigate = useNavigate();
   return (
     <div className="h-screen w-full bg-gray-100 auth-pattern shadow-2xl">
       <div className="mx-auto min-h-screen rounded-lg w-10/12 flex items-center">
@@ -14,7 +16,7 @@ export default function PreLogin() {
               Kapan lagi ngekasir jadi semudah ini?
             </p>
           </div>
-          <FlipButton />
+          <FlipButton onClick={() => navigate("/login")} />
         </main>
       </div>
     </div>
