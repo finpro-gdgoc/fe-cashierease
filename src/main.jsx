@@ -7,10 +7,12 @@ import QueryProvider from "./providers/QueryProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <QueryProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </QueryProvider>
+    <div className="mx-auto w-full max-w-screen-xl">
+      <QueryProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </QueryProvider>
+    </div>
   </StrictMode>
 );

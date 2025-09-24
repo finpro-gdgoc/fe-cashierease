@@ -1,12 +1,8 @@
-import { Button } from "./components/ui/button";
-import toast from "react-hot-toast";
+import PreLogin from "./pages/auth/PreLogin";
+import "./index.css";
 
 function App() {
-  return (
-    <div className="w-screen h-screen bg-teal-500 flex items-center justify-center">
-      <Button onClick={() => toast.success("Hello")}>Click me</Button>
-    </div>
-  );
+  return <PreLogin />;
 }
 
 export default App;
