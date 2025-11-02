@@ -15,7 +15,7 @@ export default function Login() {
           </div>
           <div className="w-[2px] h-96 bg-gray-200"></div>
           <div>
-            <h1 className="font-semibold text-2xl">Login Aplikasi</h1>
+            <h1 className="font-semibold text-2xl">Login</h1>
             <p className="text-gray-300 text-xs mb-6 mt-4">
               Autentikasi diperlukan untuk masuk kedalam aplikasi
             </p>
