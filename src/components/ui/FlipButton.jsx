@@ -1,5 +1,6 @@
 import React from "react";
-import FlipButtonRight from "@/../public/images/flipButton.png";
+// import FlipButtonRight from "@/../public/images/flipButton.png";
+import FlipButtonRight from "@/assets/images/flipButton.png";
 
 export default function FlipButton({ onClick }) {
   return (

@@ -1,5 +1,6 @@
 import React from "react";
-import MiniEase from "@/../public/images/mini-ease.png";
+// import MiniEase from "@/../public/images/mini-ease.png";
+import MiniEase from "@/assets/images/mini-ease.png";
 
 export default function LogoCashierEase() {
   return (

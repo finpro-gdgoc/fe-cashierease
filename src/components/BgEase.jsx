@@ -1,5 +1,6 @@
 import React from "react";
-import Ease from "@/../public/images/Ease.png";
+// import Ease from "@/../public/images/Ease.png";
+import Ease from "@/assets/images/Ease.png";
 
 export default function BgEase() {
   return (
