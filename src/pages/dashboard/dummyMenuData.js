@@ -1,6 +1,5 @@
 import Mieayam from "../../assets/images/mieayam.png";
 
-// Dummy menu data menggunakan gambar Mieayam
 export const dummyMenuData = [
   {
     id: 1,

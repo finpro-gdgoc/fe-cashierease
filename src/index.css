@@ -177,3 +177,12 @@ h1 {
 .transisi {
   @apply transition-all duration-300 ease-in-out;
 }
+
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #003370;
+  border-radius: 30px 30px;
+}
