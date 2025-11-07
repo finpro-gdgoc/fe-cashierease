@@ -4,20 +4,18 @@ import { useQuery } from "@tanstack/react-query";
 import { getAllMenus } from "@/services/menu";
 import { useLocation } from "react-router";
 import { Skeleton } from "@/components/ui/skeleton";
+import Mieayam from "@/assets/images/mieayam.png";
 
 export default function Menus({ setMenus, setOrder, order, search }) {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const type = searchParams.get("tipe_produk");
 
-  const { isLoading, data, refetch, isRefetching } = useQuery({
-    queryKey: ["dataMenus"],
+  const { isLoading, data, isRefetching } = useQuery({
+    queryKey: ["dataMenus", type, search],
     queryFn: () => getAllMenus(type, search),
+    refetchOnWindowFocus: false,
   });
-
-  useEffect(() => {
-    refetch();
-  }, [search, type, refetch]);
 
   useEffect(() => {
     setMenus(order);
@@ -59,7 +57,7 @@ export default function Menus({ setMenus, setOrder, order, search }) {
                   nama={menu.nama_produk}
                   jenis={menu.tipe_produk}
                   harga={menu.harga_produk}
-                  gambar={menu.gambar_produk}
+                  gambar={menu.gambar_produk || Mieayam}
                   onClick={(id, harga, nama) =>
                     handleOrder(id, harga, nama, menu.gambar_produk)
                   }

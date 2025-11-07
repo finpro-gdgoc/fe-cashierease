@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Menus from "./Menus";
 import MenusHeader from "./MenusHeader";
 import Order from "./Order";
@@ -9,12 +9,16 @@ export default function Dashboard() {
   const [order, setOrder] = useState([]);
   const [search, setSearch] = useState("");
 
-  function handleSearch(menu) {
-    setTimeout(() => {
-      if (menu.target.value.length > 1 || menu.target.value === "") {
-        setSearch(menu.target.value);
+  const debounceRef = useRef(null);
+
+  function handleSearch(value) {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    debounceRef.current = setTimeout(() => {
+      if (value.length > 1 || value === "") {
+        setSearch(value);
       }
-    }, 1500);
+    }, 600);
   }
 
   return (
@@ -31,6 +35,7 @@ export default function Dashboard() {
             search={search}
           />
         </main>
+
         <Order menus={menus} setOrder={setOrder} setMenus={setMenus} />
       </div>
     </>

@@ -32,7 +32,7 @@ export default function MenusHeader({ handleSearch }) {
             type="text"
             className="w-full outline-none text-sm "
             placeholder="Cari makanan, atau minuman"
-            onChange={(menu) => handleSearch(menu)}
+            onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
       </div>
