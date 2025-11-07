@@ -26,11 +26,21 @@ export default function LoginForm() {
   const { mutate: login } = useMutation({
     mutationFn: (data) => PostLogin(data),
     onSuccess: (response) => {
-      // Store user ID in localStorage (similar to cookies in Next.js)
-      if (response.data?.id) {
-        localStorage.setItem("id", response.data.id.toString());
+      const user = response?.data?.data;
+
+      if (user?.id != null) {
+        localStorage.setItem("id", String(user.id));
       }
-      queryClient.setQueryData(["user"], response);
+      if (user?.role) {
+        localStorage.setItem("role", user.role);
+      }
+      if (user) {
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+
+      queryClient.setQueryData(["user"], user);
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+
       toast.success("Login berhasil!");
       navigate("/dashboard");
       setIsLoading(false);

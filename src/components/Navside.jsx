@@ -5,14 +5,18 @@ import { HiBuildingStorefront, HiChartPie } from "react-icons/hi2";
 import { FaWrench } from "react-icons/fa";
 import { Logout } from "../services/auth";
 import { IoIosLogOut } from "react-icons/io";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Navside() {
   const location = useLocation();
   const pathname = location.pathname;
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const handleLogout = () => {
     Logout();
+    queryClient.removeQueries();
+    queryClient.clear();
     navigate("/");
   };
 

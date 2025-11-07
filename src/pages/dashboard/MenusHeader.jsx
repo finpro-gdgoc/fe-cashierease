@@ -8,8 +8,11 @@ import { getTokoName } from "@/services/getToko";
 
 export default function MenusHeader({ handleSearch }) {
   const { data: userData } = useQuery({
-    queryKey: ["dataUser"],
+    queryKey: ["user"],
     queryFn: () => GetUserById(),
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: false,
   });
 
   const { data: tokoData } = useQuery({

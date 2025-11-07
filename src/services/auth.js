@@ -1,59 +1,75 @@
-// Dummy data for authentication
-const dummyUsers = [
-  {
-    id: 1,
-    nomorPegawai: "PGW001",
-    password: "kasir123",
-    nama: "Kasir 1",
-    role: "kasir",
-    toko: "Toko A",
+import axios from "axios";
+import { apiurl } from "@/lib/globalvar";
+
+const ACCESS_KEY = "accessToken";
+const REFRESH_KEY = "refreshToken";
+const USER_KEY = "user";
+const ROLE_KEY = "role";
+const USERID_KEY = "id";
+
+export const tokenStore = {
+  getAccess: () => localStorage.getItem(ACCESS_KEY),
+  getRefresh: () => localStorage.getItem(REFRESH_KEY),
+  set: (access, refresh) => {
+    if (access) localStorage.setItem(ACCESS_KEY, access);
+    if (refresh) localStorage.setItem(REFRESH_KEY, refresh);
   },
-  {
-    id: 2,
-    nomorPegawai: "PGW002",
-    password: "admin456",
-    nama: "Admin 1",
-    role: "admin",
-    toko: "Toko B",
+  clear: () => {
+    localStorage.removeItem(ACCESS_KEY);
+    localStorage.removeItem(REFRESH_KEY);
   },
-  {
-    id: 3,
-    nomorPegawai: "PGW003",
-    password: "manager789",
-    nama: "Manager 1",
-    role: "manager",
-    toko: "Toko C",
-  },
-];
-
-// Simulate API call with delay
-const simulateApiDelay = () =>
-  new Promise((resolve) => setTimeout(resolve, 1000));
-
-export const PostLogin = async (credentials) => {
-  await simulateApiDelay();
-
-  const { nomorPegawai, password } = credentials;
-
-  // Find user by nomorPegawai and password
-  const user = dummyUsers.find(
-    (u) => u.nomorPegawai === nomorPegawai && u.password === password
-  );
-
-  if (!user) {
-    throw new Error("Invalid credentials");
-  }
-
-  // Return user data without password
-  const { password: _, ...userWithoutPassword } = user;
-
-  return {
-    data: userWithoutPassword,
-    token: "dummy_token_" + user.id,
-    message: "Login berhasil",
-  };
 };
 
-export const Logout = () => {
-  localStorage.removeItem("id");
+export const userStore = {
+  set: (user) => {
+    if (user) {
+      localStorage.setItem(USER_KEY, JSON.stringify(user));
+      if (user.role) localStorage.setItem(ROLE_KEY, user.role);
+      if (user.id != null) localStorage.setItem(USERID_KEY, String(user.id));
+    }
+  },
+  get: () => {
+    const raw = localStorage.getItem(USER_KEY);
+    try {
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  },
+  clear: () => {
+    localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(ROLE_KEY);
+    localStorage.removeItem(USERID_KEY);
+  },
 };
+
+export const api = axios.create({
+  baseURL: apiurl,
+  withCredentials: false,
+  headers: { "Content-Type": "application/json" },
+});
+
+api.interceptors.request.use((config) => {
+  const token = tokenStore.getAccess();
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+export async function PostLogin(payload) {
+  const res = await api.post("/auth/login", payload);
+  const data = res?.data;
+
+  const access = data?.access_token || data?.accessToken || data?.token;
+  const refresh = data?.refresh_token || data?.refreshToken;
+  tokenStore.set(access, refresh);
+
+  if (data?.data) userStore.set(data.data);
+
+  return res;
+}
+
+export function Logout() {
+  tokenStore.clear();
+  userStore.clear();
+  return Promise.resolve(true);
+}
