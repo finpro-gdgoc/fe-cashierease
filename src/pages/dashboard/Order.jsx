@@ -8,7 +8,7 @@ import NightDiscButton from "@/components/ui/NightDiscButton";
 import toast from "react-hot-toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { PostOrder } from "@/services/order";
-import { GetAllCoupons } from "@/services/coupun";
+import { GetAllCoupons } from "@/services/coupon";
 
 import { HiCurrencyDollar, HiXCircle } from "react-icons/hi2";
 import { formatRupiah } from "@/lib/utils";
@@ -75,7 +75,7 @@ export default function Order({ menus, setOrder }) {
   });
 
   const { data: allCoupons } = useQuery({
-    queryKey: ["dataAllCoupun"],
+    queryKey: ["dataAllCoupon"],
     queryFn: () => GetAllCoupons(),
   });
 
