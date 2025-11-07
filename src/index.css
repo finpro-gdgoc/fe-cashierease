@@ -186,3 +186,7 @@ h1 {
   background: #003370;
   border-radius: 30px 30px;
 }
+
+.shadow-statistic {
+  box-shadow: 25px 0 50px -12px rgba(0, 0, 0, 0.06);
+}
