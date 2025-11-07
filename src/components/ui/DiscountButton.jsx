@@ -7,7 +7,6 @@ export default function MiniCard({
   setCoupon,
   setCouponName,
   data,
-  price,
   setCouponID,
   onClick,
   isCouponActive,
@@ -15,8 +14,8 @@ export default function MiniCard({
   const [discount, setDiscount] = useState(0);
 
   useEffect(() => {
-    setCoupon(discount * price);
-  }, [discount, price]);
+    setCoupon(Number(discount) || 0);
+  }, [discount]);
 
   return (
     <Dialog>
@@ -52,9 +51,9 @@ export default function MiniCard({
               key={index}
               className="w-full py-3 border border-2 text-center text-sm font-medium rounded-lg hover:bg-[#003370] hover:text-white"
               onClick={() => {
-                setDiscount(code.besarDiscount);
+                setDiscount(Number(code.besarDiscount) || 0);
                 setCouponName(code.kodeCoupon);
-                setCouponID(code._id);
+                setCouponID(Number(code._id));
               }}
             >
               {code.kodeCoupon}

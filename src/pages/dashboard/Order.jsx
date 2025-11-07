@@ -24,8 +24,6 @@ export default function Order({ menus, setOrder }) {
   const [orderid, setOrderid] = useState("");
 
   let totalTax = 0;
-  let totalDiscount = 0;
-  let subTotalAfterDiscount = 0;
   let totalPrice = 0;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -48,14 +46,16 @@ export default function Order({ menus, setOrder }) {
     setIsCouponActive(coupon > 0);
   }, [coupon]);
 
-  totalDiscount = coupon;
-  subTotalAfterDiscount = subTotalPrice - totalDiscount;
-  totalTax = subTotalAfterDiscount * 0.1;
-  totalPrice = subTotalAfterDiscount + totalTax;
+  const discountNominal = Number(coupon) || 0;
+  const taxRate = 0.1;
+  totalTax = Math.round((Number(subTotalPrice) || 0) * taxRate); // pajak dari subtotal
+  const totalBeforeDiscount = (Number(subTotalPrice) || 0) + totalTax; // subtotal + pajak
+  totalPrice = Math.max(0, totalBeforeDiscount - discountNominal); // potong diskon di akhir
 
   function handleSubmit() {
-    if (!menus) {
+    if (!menus || menus.length === 0) {
       toast.error("Masukkan produk!");
+      return;
     }
     setIsLoading(true);
     postOrder(order);
