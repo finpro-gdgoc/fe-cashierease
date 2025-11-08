@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { PostOrder } from "@/services/order";
 import { GetAllCoupons } from "@/services/coupon";
-
+import Mieayam from "@/assets/images/mieayam.png";
 import { HiCurrencyDollar, HiXCircle } from "react-icons/hi2";
 import { formatRupiah } from "@/lib/utils";
 
@@ -117,7 +117,12 @@ export default function Order({ menus, setOrder }) {
                   <div className="flex items-center justify-between ">
                     <div className="flex items-center gap-4  w-[45%]">
                       <img
-                        src={item.gambar}
+                        src={
+                          typeof item.gambar === "string" &&
+                          item.gambar.trim() !== ""
+                            ? item.gambar
+                            : Mieayam
+                        }
                         alt={item.nama}
                         className="w-[60px] h-[60px] object-cover rounded"
                       />
