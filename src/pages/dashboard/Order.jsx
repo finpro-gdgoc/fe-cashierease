@@ -82,7 +82,7 @@ export default function Order({ menus, setOrder }) {
   return (
     <div className="w-full flex flex-col justify-between col-span-5 overflow-y-hidden h-screen">
       <div className="w-full px-4 pl-2 py-10 ">
-        <p className="text-[#003370] text-2xl font-medium">Order #1</p>
+        <p className="text-[#003370] text-2xl font-medium">Pemesanan</p>
         <div className="flex gap-2 mt-5">
           <button
             className={

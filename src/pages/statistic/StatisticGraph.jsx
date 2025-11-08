@@ -13,19 +13,6 @@ import { useQuery } from "@tanstack/react-query";
 import { GetStatisticByDay } from "@/services/statistic";
 import MiniLoader from "@/components/ui/MiniLoader";
 
-// const chartData = [
-//   { date: "12 Agustus", income: 2900000 },
-//   { date: "13 Agustus", income: 4000000 },
-//   { date: "14 Agustus", income: 1350000 },
-//   { date: "15 Agustus", income: 2850000 },
-//   { date: "16 Agustus", income: 4000000 },
-//   { date: "17 Agustus", income: 3725000 },
-//   { date: "18 Agustus", income: 3750000 },
-//   { date: "19 Agustus", income: 2500000 },
-//   { date: "20 Agustus", income: 2650000 },
-//   { date: "21 Agustus", income: 2230000 },
-// ];
-
 const chartConfig = {
   desktop: {
     label: "Chart",
@@ -34,10 +21,9 @@ const chartConfig = {
 };
 
 const options = [
-  { value: 7, label: "1 Minggu Terakhir" },
   { value: 31, label: "1 Bulan Terakhir" },
+  { value: 62, label: "2 Bulan Terakhir" },
   { value: 93, label: "3 Bulan Terakhir" },
-  { value: 365, label: "1 Tahun Terakhir" },
 ];
 
 export default function StatisticGraph() {
@@ -56,7 +42,7 @@ export default function StatisticGraph() {
     <div className="w-3/4 max-h-72 flex flex-col border-2 border-gray-300 rounded-lg px-6 py-5">
       <StatsCompoHeader
         title="Statistik Pendapatan"
-        date="1 Minggu Terakhir"
+        date="1 Bulan Terakhir"
         options={options}
         setHour={setDays}
       />
@@ -81,8 +67,10 @@ export default function StatisticGraph() {
                 dataKey="date"
                 tickLine={false}
                 axisLine={false}
-                tickMargin={8}
-                tickFormatter={(value) => value.slice(0, 3)}
+                tickMargin={4}
+                tickFormatter={(value) =>
+                  days <= 31 ? value.slice(0, 12) : value.slice(0, 3)
+                }
               />
               {/* <YAxis dataKey="" tickMargin={2} tickLine={true} /> */}
               <ChartTooltip

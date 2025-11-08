@@ -1,108 +1,159 @@
-// Dummy statistic service for React (no backend, for component integration)
+// src/services/statistic.js
+import { apiurl } from "@/lib/globalvar";
+import { api } from "@/services/auth";
 
-export function GetStatistic() {
+/** =======================
+ *  Helpers
+ *  ======================= */
+function pickNumber(...vals) {
+  for (const v of vals) {
+    const n = Number(v);
+    if (Number.isFinite(n)) return n;
+  }
+  return 0;
+}
+// function pickString(...vals) {
+//   for (const v of vals) {
+//     if (typeof v === "string" && v.length) return v;
+//   }
+//   return "";
+// }
+
+/** =======================
+ *  Overview (cards atas)
+ *  GET /order/statistics/
+ *  ======================= */
+export async function GetStatistic() {
+  const res = await api.get("/order/statistics/");
+  const d = res?.data?.data ?? res?.data ?? {};
+
   return {
-    totalIncome: 34800000,
-    totalQuantity: 958,
-    totalOrders: 358,
-    totalCouponUse: 102,
+    // FE kamu pakai totalIncome, totalQuantity, totalOrders, totalCouponUse
+    totalIncome: pickNumber(d.totalIncome, d.total_pemasukan, d.total_income),
+    totalQuantity: pickNumber(d.totalQuantity, d.total_pesanan, d.total_orders),
+    totalOrders: pickNumber(d.totalOrders, d.total_pelanggan, d.customers),
+    totalCouponUse: pickNumber(
+      d.totalCouponUse,
+      d.total_kupon,
+      d.total_coupon_used
+    ),
   };
 }
 
-export function GetTransactionByHour(hour) {
-  if (hour === 1) {
-    return [
-      {
-        _id: "123456781",
-        createdAt: new Date().toISOString(),
-        total_price_with_tax: 57000,
-        payment_method: "Tunai",
-      },
-      {
-        _id: "223456782",
-        createdAt: new Date().toISOString(),
-        total_price_with_tax: 95000,
-        payment_method: "QRIS",
-      },
-    ];
-  }
-  if (hour === 6) {
-    return [
-      // ...fill with 6-hour data
-    ];
-  }
-  if (hour === 12) {
-    return [
-      // ...fill with 12-hour data
-    ];
-  }
-  if (hour === 24) {
-    return [
-      // ...fill with 24-hour data
-    ];
-  }
-  return [];
+/** =======================
+ *  Statistik pendapatan (timeseries)
+ *  GET /order/statistics/pendapatan?days=7
+ *  FE expects: [{ date, income }]
+ *  ======================= */
+export async function GetStatisticByDay(days = 7) {
+  const res = await api.get("/order/statistics/pendapatan");
+
+  const box = res?.data?.data ?? {};
+  // Pilih bucket berdasar 'days' dari UI-mu
+  // 7 / 31  -> oneMonth
+  // 62      -> twoMonth (kalau nanti dipakai)
+  // 93+     -> threeMonth
+  let bucket;
+  if (days <= 31) bucket = box.oneMonth;
+  else if (days <= 62) bucket = box.twoMonth;
+  else bucket = box.threeMonth;
+
+  const rows = Array.isArray(bucket) ? bucket : [];
+
+  // Normalisasi ke shape yang dipakai chart: { date, income }
+  return rows.map((r) => ({
+    date: r.week ?? r.label ?? "", // "Minggu ke-1"
+    income: Number(r.income ?? r.value ?? 0), // 440000, dst.
+  }));
 }
 
-export function GetStatisticByDay(days) {
-  // Format: [{ date: '12 Agustus', income: 2900000 }, ...]
-  if (days === 7) {
-    return [
-      { date: "14 Agustus", income: 1350000 },
-      { date: "15 Agustus", income: 2850000 },
-      { date: "16 Agustus", income: 4000000 },
-      { date: "17 Agustus", income: 3725000 },
-      { date: "18 Agustus", income: 3750000 },
-      { date: "19 Agustus", income: 2500000 },
-      { date: "20 Agustus", income: 2650000 },
-      { date: "21 Agustus", income: 2230000 },
-    ];
-  }
-  if (days === 31) {
-    return [
-      // ...dummy for one month
-    ];
-  }
-  if (days === 93) {
-    return [
-      // ...dummy for three months
-    ];
-  }
-  if (days === 365) {
-    return [
-      // ...dummy for twelve months
-    ];
-  }
-  return [];
+/** =======================
+ *  Statistik pelanggan (timeseries)
+ *  GET /order/statistics/pelanggan?days=7
+ *  FE expects: [{ date, orders }]
+ *  ======================= */
+export async function GetPelangganByDay(days = 7) {
+  const res = await api.get("/order/statistics/pelanggan");
+
+  const box = res?.data?.data ?? {};
+  // Pilih bucket sesuai pilihan UI:
+  // ≤7 hari  -> oneweek
+  // ≤31 hari -> onemonth
+  // >31 hari -> threemonth
+  let bucket;
+  if (days <= 7) bucket = box.oneweek;
+  else if (days <= 31) bucket = box.onemonth;
+  else bucket = box.threemonth;
+
+  const rows = Array.isArray(bucket) ? bucket : [];
+
+  // Normalisasi ke shape yang dipakai chart: { date, orders }
+  return rows.map((r) => ({
+    date: r.date ?? r.label ?? "",
+    orders: Number(r.orders ?? r.value ?? 0),
+  }));
 }
 
-export function GetPelangganByDay(days) {
-  // Format: [{ date: '12 Agustus', orders: 11 }, ...]
-  if (days === 7) {
-    return [
-      { date: "12 Agustus", orders: 11 },
-      { date: "13 Agustus", orders: 6 },
-      { date: "14 Agustus", orders: 7 },
-      { date: "15 Agustus", orders: 10 },
-      { date: "16 Agustus", orders: 13 },
-      { date: "17 Agustus", orders: 8 },
-      { date: "18 Agustus", orders: 9 },
-    ];
+/** =======================
+ *  Histori transaksi (list kanan)
+ *  Prefer: GET /order/statistics/transactions?hours=1
+ *  Fallback: GET /order/ lalu filter by jam di FE
+ *  ======================= */
+// --- History Transaksi (by hours) ---
+export async function GetTransactionByHour(hours = 1) {
+  // pilih bucket sesuai jam yang kamu pakai di UI
+  const bucketKey =
+    hours === 1
+      ? "ordersOneHour"
+      : hours === 6
+      ? "ordersSixHour"
+      : hours === 12
+      ? "ordersTwelveHour"
+      : "ordersOneDay"; // 24 jam
+
+  try {
+    const res = await api.get(`${apiurl}/order/statistics/`);
+    const raw = res?.data?.data?.[bucketKey] ?? [];
+
+    // Kembalikan data + sedikit field turunan yang umum dipakai di UI
+    return raw.map((o) => ({
+      ...o,
+      id: o.ID,
+      date: o.order_date,
+      method: o.payment_method, // "CASH" | "QRIS" | "DEBIT"
+      total: o.total_price_with_tax || o.total_price || 0,
+      items:
+        o.order_items?.map((it) => ({
+          ...it,
+          id: it.ID,
+          name: it.product_name,
+          qty: it.quantity,
+        })) ?? [],
+    }));
+  } catch (err) {
+    console.error("GetTransactionByHour error:", err);
+    return [];
   }
-  if (days === 31) {
-    return [
-      // ...dummy for one month
-    ];
+}
+
+/** =======================
+ *  (Opsional) Menu populer / bulan
+ *  GET /order/statistics/popularMenu/:mon
+ *  ======================= */
+// Popular menu (0 = current month di backend)
+export async function GetPopularMenu(month = 0) {
+  try {
+    const res = await api.get(
+      `${apiurl}/order/statistics/popularMenu/${month}`
+    );
+    const raw = res?.data?.data ?? [];
+    return raw.map((it, idx) => ({
+      id: idx + 1,
+      menu: it.product_name,
+      jumlah: it.count,
+    }));
+  } catch (err) {
+    console.error("GetPopularMenu error:", err);
+    return [];
   }
-  if (days === 93) {
-    return [
-      // ...dummy for three months
-    ];
-  }
-  if (days === 365) {
-    return [
-      // ...dummy for twelve months
-    ];
-  }
-  return [];
 }

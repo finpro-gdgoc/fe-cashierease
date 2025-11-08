@@ -10,7 +10,6 @@ export default function ButtonOrderConfirmation({
   payment,
   handleSubmit,
   isLoading,
-  orderid,
   setOrder,
 }) {
   return (
@@ -39,10 +38,10 @@ export default function ButtonOrderConfirmation({
                 <p className="font-bold text-3xl">Rp. -</p>
                 <hr className="w-full border-[1px] my-2"></hr>
                 <div className="flex flex-col gap-3 w-full text-gray-400">
-                  <div className="flex justify-between">
+                  {/* <div className="flex justify-between">
                     <p>Kode Pembayaran</p>
                     <p className="text-black">-</p>
-                  </div>
+                  </div> */}
                   <div className="flex justify-between">
                     <p>Waktu Pembayaran</p>
                     <p className="text-black">-</p>
@@ -75,10 +74,10 @@ export default function ButtonOrderConfirmation({
                 <p className="font-bold text-3xl">{formatRupiah(totalPrice)}</p>
                 <hr className="w-full border-[1px] my-2"></hr>
                 <div className="flex flex-col gap-3 w-full text-gray-400">
-                  <div className="flex justify-between">
+                  {/* <div className="flex justify-between">
                     <p>Kode Pembayaran</p>
                     <p className="text-black">{`#${orderid}`}</p>
-                  </div>
+                  </div> */}
                   <div className="flex justify-between">
                     <p>Waktu Pembayaran</p>
                     <div className="flex flex-col items-end">
