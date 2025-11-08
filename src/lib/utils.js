@@ -129,3 +129,22 @@ export function getCurrentTime() {
     hour12: false,
   });
 }
+
+// utils (mis. src/lib/utils.js)
+export function formatCouponWIB(isoString) {
+  if (!isoString) return "-";
+  const d = new Date(isoString);
+  return (
+    d
+      .toLocaleString("id-ID", {
+        timeZone: "Asia/Jakarta",
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      })
+      .replace(".", ":") + " WIB"
+  );
+}
