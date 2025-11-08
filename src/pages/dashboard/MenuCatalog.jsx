@@ -9,17 +9,16 @@ function MenuItem({ nama, jenis, harga, id, onClick, gambar }) {
       className="border-gray-300 border-[1px] rounded-md cursor-pointer px-4 pt-4 pb-2 relative hover:bg-neutral-500 transition-all duration-300 "
       onClick={() => onClick(id, harga, nama)}
     >
-      <div className="flex items-center justify-center mb-2 bg">
-        <div className="rounded-full p-2 w-24 h-24 flex items-center bg-gray-200 overflow-hidden">
-          <div className="w-20 ">
-            <img
-              src={gambar}
-              alt="Gambar produk"
-              className="w-20 h-20 object-cover"
-            />
-          </div>
+      <div className="flex items-center justify-center mb-2">
+        <div className="rounded-full p-2 w-24 h-24 flex items-center justify-center bg-gray-200 overflow-hidden">
+          <img
+            src={gambar}
+            alt="Gambar produk"
+            className="w-full h-full object-cover rounded-full aspect-square"
+          />
         </div>
       </div>
+
       <p className="font-normal text-sm">{nama}</p>
       <div className="flex justify-between items-center mt-2">
         <p className="text-[10px] text-gray-300 font-normal capitalize">

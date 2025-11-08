@@ -43,13 +43,6 @@ export default function ConfigHeader({ title, paragraph, children }) {
             Kelola Toko
           </a>
           <a
-            href="/userconfigure"
-            className="hover:bg-white px-2 py-1 rounded-lg w-full"
-            style={{ textDecoration: "none" }}
-          >
-            Kelola Pengguna
-          </a>
-          <a
             href="/productconfigure"
             className="hover:bg-white px-2 py-1 rounded-lg w-full"
             style={{ textDecoration: "none" }}
