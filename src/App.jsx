@@ -7,6 +7,8 @@ import ShopConfigure from "./pages/configure/ShopConfigure";
 import { Routes, Route, Navigate } from "react-router";
 import { isAuthenticated, getRole } from "./services/auth";
 import DiscountConfigure from "./pages/configure/DiscountConfigure";
+import UserConfigure from "./pages/configure/UserConfigure";
+import ProductConfigure from "./pages/configure/ProductConfigure";
 
 function RequireAuth({ children }) {
   if (!isAuthenticated()) return <Navigate to="/" replace />;
@@ -74,6 +76,16 @@ export default function App() {
           <RequireAuth>
             <AdminOnly>
               <DiscountConfigure />
+            </AdminOnly>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/productconfigure"
+        element={
+          <RequireAuth>
+            <AdminOnly>
+              <ProductConfigure />
             </AdminOnly>
           </RequireAuth>
         }

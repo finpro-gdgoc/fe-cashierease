@@ -41,3 +41,15 @@ export async function getAllMenus(tipeProduk, search) {
 
   return mapped;
 }
+
+export async function addMenu(payload) {
+  // pastikan token admin otomatis diintercept oleh api
+  const res = await api.post("/produk", {
+    nama_produk: payload.nama_produk,
+    harga_produk: payload.harga_produk,
+    stok_produk: 50, // default stok 50
+    tipe_produk: payload.tipe_produk,
+  });
+
+  return res?.data ?? res;
+}
