@@ -167,7 +167,7 @@ h1 {
 }
 
 .auth-pattern {
-  @apply bg-[url(/public/images/auth-pattern.png)];
+  @apply bg-[url(src/assets/images/auth-pattern.png)];
 }
 
 .input-style {
