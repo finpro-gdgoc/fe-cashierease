@@ -1,4 +1,3 @@
-// src/services/auth.js
 import axios from "axios";
 import { apiurl } from "@/lib/globalvar";
 
@@ -44,34 +43,28 @@ export const userStore = {
   },
 };
 
-// === Satu-satunya instance axios yang dipakai semua service ===
 export const api = axios.create({
-  baseURL: apiurl, // contoh: "http://localhost:8080/api/v1"
+  baseURL: apiurl,
   headers: { "Content-Type": "application/json" },
 });
 
-// Request: sisipkan access token
 api.interceptors.request.use((config) => {
   const token = tokenStore.getAccess();
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// -------- Refresh Token Flow (response interceptor) ----------
 let isRefreshing = false;
-let refreshPromise = null; // biar 1 refresh dipakai rame2
+let refreshPromise = null;
 
 async function doRefresh() {
   const rt = tokenStore.getRefresh();
   if (!rt) throw new Error("No refresh token");
-
-  // pakai axios biasa (bukan `api`) agar interceptor tidak ikut-ikutan
   const res = await axios.post(`${apiurl}/auth/refresh`, {
     refresh_token: rt,
   });
 
   const data = res?.data || {};
-  // backend kamu biasanya kirim access_token baru (kadang ada refresh baru juga)
   const newAccess =
     data.access_token ||
     data.accessToken ||
@@ -81,8 +74,7 @@ async function doRefresh() {
 
   if (!newAccess) throw new Error("No access token in refresh response");
 
-  tokenStore.set(newAccess, newRefresh); // kalau refresh tidak ada, setter akan skip
-  // set default header untuk request berikutnya
+  tokenStore.set(newAccess, newRefresh);
   api.defaults.headers.common.Authorization = `Bearer ${newAccess}`;
   return newAccess;
 }
@@ -93,12 +85,10 @@ api.interceptors.response.use(
     const original = error.config;
     const status = error?.response?.status;
 
-    // Jangan nge-loop di endpoint login/refresh
     const url = (original?.url || "").toLowerCase();
     const isAuthEndpoint =
       url.includes("/auth/login") || url.includes("/auth/refresh");
 
-    // Kalau 401 dan belum pernah di-retry —> refresh
     if (status === 401 && !original?._retry && !isAuthEndpoint) {
       original._retry = true;
 
@@ -114,15 +104,12 @@ api.interceptors.response.use(
             });
         }
 
-        // tunggu refresh (kalau ada 401 paralel, semuanya nunggu promise yang sama)
         const newAccess = await refreshPromise;
 
-        // set header request yang gagal, lalu ulangi
         original.headers = original.headers || {};
         original.headers.Authorization = `Bearer ${newAccess}`;
         return api(original);
       } catch (e) {
-        // refresh gagal —> bersihkan sesi & arahkan ke login
         try {
           tokenStore.clear();
           userStore.clear();
@@ -136,7 +123,6 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-// ------------------------------------------------------------
 
 export async function PostLogin(payload) {
   const res = await api.post("/auth/login", payload);
@@ -150,6 +136,13 @@ export async function PostLogin(payload) {
 
   return res;
 }
+
+export const isAuthenticated = () => !!tokenStore.getAccess();
+
+export const getRole = () => {
+  const role = localStorage.getItem("role");
+  return role ? role.toLowerCase() : "";
+};
 
 export function Logout() {
   tokenStore.clear();

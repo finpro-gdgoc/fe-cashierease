@@ -13,11 +13,20 @@ export default function Navside() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  const role = localStorage.getItem("role");
+
   const handleLogout = () => {
     Logout();
     queryClient.removeQueries();
     queryClient.clear();
     navigate("/");
+  };
+
+  const handleConfigureClick = (e) => {
+    if (role === "cashier") {
+      e.preventDefault();
+      navigate("/dashboard");
+    }
   };
 
   return (
@@ -38,18 +47,21 @@ export default function Navside() {
       >
         <HiChartPie className="text-5xl text-white" />
       </Link>
-      <Link
-        to="/shopconfigure"
-        className={cn(`p-2 hover:bg-[#5f67af] rounded-xl`, {
-          "bg-[#95a1d9]":
-            pathname === "/shopconfigure" ||
-            pathname === "/productconfigure" ||
-            pathname === "/discountconfigure" ||
-            pathname === "/userconfigure",
-        })}
-      >
-        <FaWrench className="text-5xl text-white" />
-      </Link>
+      {role === "admin" && (
+        <Link
+          to="/shopconfigure"
+          onClick={handleConfigureClick}
+          className={cn(`p-2 hover:bg-[#5f67af] rounded-xl`, {
+            "bg-[#95a1d9]":
+              pathname === "/shopconfigure" ||
+              pathname === "/productconfigure" ||
+              pathname === "/discountconfigure" ||
+              pathname === "/userconfigure",
+          })}
+        >
+          <FaWrench className="text-5xl text-white" />
+        </Link>
+      )}
       <button
         onClick={handleLogout}
         className={cn(`p-2 hover:bg-[#95a1d9] rounded-xl`, {
